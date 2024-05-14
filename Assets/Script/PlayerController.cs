@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool podePular;
     [SerializeField] Rigidbody2D _rb;
 
+    [SerializeField] Animator anima;
+    [SerializeField] SpriteRenderer sprite;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,19 +23,49 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         
-        move.x = Input.GetAxisRaw("Horizontal");        
-        _rb.velocity = new Vector2(move.x* _velocidade, _rb.velocity.y);
+        move.x = Input.GetAxisRaw("Horizontal")*_velocidade * 1000 * Time.deltaTime ;        
 
-        if (Input.GetKeyDown(KeyCode.Space) && podePular == false)
+        controleAnima();
+    }
+
+    private void FixedUpdate()
+    {
+        _rb.velocity = new Vector2(move.x, _rb.velocity.y);
+
+    }
+
+    public void controleAnima()
+    {
+        if (_rb.velocity.x != 0)
+        {
+            anima.SetBool("Move", true);
+        }
+        else
+        {
+            anima.SetBool("Move", false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && podePular == true)
         {
             _rb.AddForce(Vector2.up * _forcaPulo, ForceMode2D.Impulse);
-            podePular = true;
+            anima.SetTrigger("Jump");
+            podePular = false;
         }
-        
+
+        if (_rb.velocity.x > 0 && podePular == true)
+        {
+            sprite.flipX = false;
+        }
+        else if (_rb.velocity.x < 0 && podePular == true)
+        {
+            sprite.flipX = true;
+        }
+
+        anima.SetBool("noChao", podePular);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        podePular = false;
+        podePular = true;
     }
 }
