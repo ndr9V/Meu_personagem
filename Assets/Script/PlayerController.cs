@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         _rb.velocity = new Vector2(move.x, _rb.velocity.y);
-
     }
 
     public void controleAnima()
@@ -61,11 +60,24 @@ public class PlayerController : MonoBehaviour
             sprite.flipX = true;
         }
 
+        if (podePular == true)
+        {
+            _velocidade = 3;
+        }
+        else
+        {
+            _velocidade = 1.5f;
+
+        }
+
         anima.SetBool("noChao", podePular);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        podePular = true;
+        if (collision.transform.gameObject.tag == "chao")
+        {
+            podePular = true;
+        }
     }
 }
